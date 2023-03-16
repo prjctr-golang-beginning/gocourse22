@@ -1,0 +1,18 @@
+permission-groups:
+  - name: common
+    permissions:
+      - countries:country:view
+      - languages:language:view
+
+  - name: brands-full
+    permissions:
+      - brands:brand:view
+      - brands:brand:create
+      - brands:brand:edit
+      - brands:brand:delete
+
+users:
+  - name: test_user
+    permission-groups:
+      - common
+      - brands-full
