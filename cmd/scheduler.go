@@ -1,0 +1,82 @@
+package cmd
+
+import (
+	"errors"
+	"github.com/samber/do"
+	"github.com/urfave/cli/v2"
+	"gocourse22/cmd/flag"
+	"gocourse22/pkg/scheduler"
+	"gocourse22/pkg/scheduler/tasks"
+	"gocourse22/providers"
+	"log"
+	"net/http"
+	"os/signal"
+	"sync"
+	"syscall"
+)
+
+// Worker define the run command
+func Worker() *cli.Command {
+	return &cli.Command{
+		Name:  "worker",
+		Usage: "The Worker",
+		Flags: []cli.Flag{
+			// db
+			flag.PostgresHostFlag(),
+			flag.PostgresPortFlag(),
+			flag.PostgresUserFlag(),
+			flag.PostgresPasswordFlag(),
+			flag.PostgresDBNameFlag(),
+
+			flag.InstanceEnvFlag(),
+			flag.InstanceIDFlag(),
+			flag.VarDirectoryFlag(),
+		},
+		Action: func(c *cli.Context) error {
+			// create injector
+			injector := do.DefaultInjector
+
+			// listen to os interrupt signals and close the context
+			ctx, cancelFunc := signal.NotifyContext(c.Context, syscall.SIGTERM, syscall.SIGINT, syscall.SIGKILL)
+			defer cancelFunc()
+
+			// inject the signal notify context
+			do.ProvideValue(injector, ctx)
+
+			// needed to use flags provided by the cmd.Run command
+			c.Context = ctx
+			do.OverrideValue(injector, c)
+
+			do.Provide(injector, providers.ProvideScheduler)
+
+			stopWg := sync.WaitGroup{}
+			// start the scheduler service
+			go func() {
+				if c.Bool(flag.SchedulerEnable) {
+					stopWg.Add(1)
+					defer stopWg.Done()
+
+					tasksScheduler := do.MustInvoke[*scheduler.Scheduler](injector)
+					go func() {
+						<-ctx.Done()
+						tasksScheduler.Shutdown()
+					}()
+					if err := tasksScheduler.Manage(ctx,
+						tasks.CalculateFinances(injector),
+						tasks.CalculateEmployysBonuses(injector),
+					); err != nil {
+						if !errors.Is(err, http.ErrServerClosed) {
+							log.Fatal(err)
+						}
+					}
+					log.Println("Scheduler has been stopped")
+				} else {
+					log.Println("Starting disabled")
+				}
+			}()
+
+			stopWg.Wait()
+			return injector.Shutdown()
+		},
+	}
+}
