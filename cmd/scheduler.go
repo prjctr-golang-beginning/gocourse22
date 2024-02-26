@@ -5,7 +5,7 @@ import (
 	"github.com/samber/do"
 	"github.com/urfave/cli/v2"
 	"gocourse22/cmd/flag"
-	providers2 "gocourse22/internal/providers"
+	"gocourse22/internal/providers"
 	"gocourse22/pkg/scheduler"
 	"gocourse22/pkg/scheduler/tasks"
 	"log"
@@ -47,8 +47,8 @@ func Worker() *cli.Command {
 			c.Context = ctx
 			do.OverrideValue(injector, c)
 
-			providers2.ProvideConnection(injector)
-			do.Provide(injector, providers2.ProvideScheduler)
+			providers.ProvideConnection(injector)
+			do.Provide(injector, providers.ProvideScheduler)
 
 			stopWg := sync.WaitGroup{}
 			stopWg.Add(1)
