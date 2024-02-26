@@ -1,65 +1,36 @@
-table "jobs" {
-  schema = schema.public
-  column "id" {
-    type    = uuid
-    default = sql("gen_random_uuid()")
+table "patients" {
+  schema = "public"
+  column "patient_id" {
+    type = "int"
+    null = false
+    attrs = [auto_increment()]
   }
-
-  column "name" {
-    type = varchar(255)
+  column "first_name" {
+    type = "varchar(50)"
     null = false
   }
-
-  column "status" {
-    type    = enum.job_status
-    null    = false
-    default = "new"
-  }
-
-  column "worker_id" {
-    type    = int
-    null    = true
-  }
-
-  column "started_at" {
-    type = timestamp
-    null = true
-    comment = "seconds"
-  }
-
-  column "process_took" {
-    type = double_precision
-    null = true
-  }
-
-  column "schedule_type" {
-    type = varchar(255)
+  column "last_name" {
+    type = "varchar(50)"
     null = false
   }
-
-  column "config" {
-    type = json
+  column "date_of_birth" {
+    type = "date"
     null = false
   }
-
-  column "created_by" {
-    type = varchar(26)
+  column "gender" {
+    type = "char(1)"
     null = false
   }
-
-  column "created_at" {
-    type = timestamp
-    null = false
+  column "email" {
+    type = "varchar(100)"
   }
-
-  column "updated_at" {
-    type = timestamp
-    null = true
+  column "phone" {
+    type = "varchar(20)"
   }
-
+  column "address" {
+    type = "text"
+  }
   primary_key {
-    columns = [column.id]
+    columns = ["patient_id"]
   }
-
-  comment = "Jobs table"
 }

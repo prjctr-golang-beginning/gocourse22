@@ -1,82 +1,40 @@
-table "scan_raw_result" {
-  schema = schema.public
-  column "id" {
-    type    = uuid
-    default = sql("gen_random_uuid()")
+table "visits" {
+  schema = "public"
+  column "visit_id" {
+    type = "int"
+    null = false
+    attrs = [auto_increment()]
   }
-
-  column "job_id" {
-    type = uuid
+  column "patient_id" {
+    type = "int"
     null = false
   }
-
-  column "business_rule_id" {
-    type = uuid
+  column "doctor_id" {
+    type = "int"
     null = false
   }
-
-  column "scan_start_time" {
-    type = timestamp
+  column "visit_date" {
+    type = "timestamp with time zone"
     null = false
   }
-
-  column "scan_end_time" {
-    type = timestamp
-    null = false
+  column "reason" {
+    type = "text"
   }
-
-  column "run_status" {
-    type = varchar(255)
-    null = false
+  column "diagnosis" {
+    type = "text"
   }
-
-  column "state" {
-    type    = enum.scan_raw_result_state
-    null    = false
+  column "notes" {
+    type = "text"
   }
-
-  column "parsed_at" {
-    type = timestamp
-    null = true
-  }
-
-  column "return_code" {
-    type = int
-    null = false
-  }
-
-  column "scan_result" {
-    type = json
-    null = true
-  }
-
-  column "std_out" {
-    type = text
-    null = true
-  }
-
-  column "std_err" {
-    type = text
-    null = true
-  }
-
   primary_key {
-    columns = [column.id]
+    columns = ["visit_id"]
   }
-
-  foreign_key "job_id" {
-    columns     = [column.job_id]
-    ref_columns = [table.jobs.column.id]
-    on_update   = NO_ACTION
-    on_delete   = CASCADE
+  foreign_key "fk_patient" {
+    columns     = ["patient_id"]
+    ref_columns = ["patients.patient_id"]
   }
-
-  foreign_key "business_rule_id" {
-    columns     = [column.business_rule_id]
-    ref_columns = [table.business_rule.column.id]
-    on_update   = NO_ACTION
-    on_delete   = CASCADE
+  foreign_key "fk_doctor" {
+    columns     = ["doctor_id"]
+    ref_columns = ["doctors.doctor_id"]
   }
-
-  comment = "Scan result table"
 }

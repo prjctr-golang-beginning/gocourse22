@@ -10,7 +10,7 @@ import (
 type Task interface {
 	TimeType() TimeType
 	Expression() string
-	Operation(ctx context.Context) func()
+	Operation(ctx context.Context, inj *do.Injector) func()
 }
 
 type TimeType uint8
@@ -31,11 +31,12 @@ func (tt TimeType) String() string {
 	}
 }
 
-func NewScheduler(_ *do.Injector) *Scheduler {
-	return &Scheduler{}
+func NewScheduler(inj *do.Injector) *Scheduler {
+	return &Scheduler{inj: inj}
 }
 
 type Scheduler struct {
+	inj        *do.Injector
 	_scheduler *gocron.Scheduler
 }
 
@@ -45,12 +46,12 @@ func (r *Scheduler) Manage(ctx context.Context, tasks ...Task) error {
 	for i := range tasks {
 		switch tasks[i].TimeType() {
 		case Every:
-			_, err := s.Every(tasks[i].Expression()).Do(tasks[i].Operation(ctx))
+			_, err := s.Every(tasks[i].Expression()).Do(tasks[i].Operation(ctx, r.inj))
 			if err != nil {
 				return err
 			}
 		case Cron:
-			_, err := s.Cron(tasks[i].Expression()).Do(tasks[i].Operation(ctx))
+			_, err := s.Cron(tasks[i].Expression()).Do(tasks[i].Operation(ctx, r.inj))
 			if err != nil {
 				return err
 			}

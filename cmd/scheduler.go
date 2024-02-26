@@ -18,7 +18,7 @@ import (
 // Worker define the run command
 func Worker() *cli.Command {
 	return &cli.Command{
-		Name:  "worker",
+		Name:  "scheduler",
 		Usage: "The Worker",
 		Flags: []cli.Flag{
 			// db
@@ -47,32 +47,31 @@ func Worker() *cli.Command {
 			c.Context = ctx
 			do.OverrideValue(injector, c)
 
+			providers.ProvideConnection(injector)
 			do.Provide(injector, providers.ProvideScheduler)
 
 			stopWg := sync.WaitGroup{}
+			stopWg.Add(1)
 			// start the scheduler service
 			go func() {
-				if c.Bool(flag.SchedulerEnable) {
-					stopWg.Add(1)
-					defer stopWg.Done()
+				defer stopWg.Done()
 
-					tasksScheduler := do.MustInvoke[*scheduler.Scheduler](injector)
-					go func() {
-						<-ctx.Done()
-						tasksScheduler.Shutdown()
-					}()
-					if err := tasksScheduler.Manage(ctx,
-						tasks.CalculateFinances(injector),
-						tasks.CalculateEmployysBonuses(injector),
-					); err != nil {
-						if !errors.Is(err, http.ErrServerClosed) {
-							log.Fatal(err)
-						}
+				tasksScheduler := do.MustInvoke[*scheduler.Scheduler](injector)
+				go func() {
+					<-ctx.Done()
+					tasksScheduler.Shutdown()
+				}()
+
+				if err := tasksScheduler.Manage(ctx,
+					tasks.NewComplicatedCalculation(injector),
+					tasks.CalculateEmployysBonuses(injector),
+				); err != nil {
+					if !errors.Is(err, http.ErrServerClosed) {
+						log.Fatal(err)
 					}
-					log.Println("Scheduler has been stopped")
-				} else {
-					log.Println("Starting disabled")
 				}
+				log.Println("Scheduler has been stopped")
+
 			}()
 
 			stopWg.Wait()

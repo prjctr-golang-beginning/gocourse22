@@ -31,9 +31,6 @@ func Run() *cli.Command {
 			flag.PostgresUserFlag(),
 			flag.PostgresPasswordFlag(),
 			flag.PostgresDBNameFlag(),
-
-			// scheduler
-			flag.SchedulerEnableFlag(),
 		},
 		Action: func(c *cli.Context) error {
 			// create injector

@@ -1,50 +1,34 @@
-table "validation_suite" {
-  schema = schema.public
-  column "id" {
-    type    = uuid
-    default = sql("gen_random_uuid()")
-  }
-
-  column "account_id" {
-    type = varchar(26)
+table "schedules" {
+  schema = "public"
+  column "schedule_id" {
+    type = "int"
     null = false
-    default = ""
+    attrs = [auto_increment()]
   }
-
-  column "name" {
-    type = varchar(255)
+  column "doctor_id" {
+    type = "int"
     null = false
   }
-
-  column "description" {
-    type = varchar(512)
-    null = true
-  }
-
-  column "status" {
-    type    = enum.status
-    null    = false
-    default = "disabled"
-  }
-
-  column "created_by" {
-    type = varchar(26)
+  column "work_day" {
+    type = "date"
     null = false
   }
-
-  column "created_at" {
-    type = timestamp
+  column "start_time" {
+    type = "time"
     null = false
   }
-
-  column "updated_at" {
-    type = timestamp
-    null = true
+  column "end_time" {
+    type = "time"
+    null = false
   }
-
+  column "notes" {
+    type = "text"
+  }
   primary_key {
-    columns = [column.id]
+    columns = ["schedule_id"]
   }
-
-  comment = "Validation suite table"
+  foreign_key "fk_doctor_schedule" {
+    columns     = ["doctor_id"]
+    ref_columns = ["doctors.doctor_id"]
+  }
 }

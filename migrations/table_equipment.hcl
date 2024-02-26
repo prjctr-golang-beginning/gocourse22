@@ -1,34 +1,30 @@
-table "jobs_run_history" {
-  schema = schema.public
-  column "id" {
-    type    = uuid
-    default = sql("gen_random_uuid()")
-  }
-
-  column "job_id" {
-    type    = uuid
-    null    = false
-  }
-
-  column "status" {
-    type    = enum.job_run_status
-    null    = false
-  }
-
-  column "created_at" {
-    type = timestamp
+table "equipment" {
+  schema = "public"
+  column "equipment_id" {
+    type = "int"
     null = false
-    default = sql("now()")
+    attrs = [auto_increment()]
   }
-
-  column "details" {
-    type = text
-    null = true
+  column "name" {
+    type = "varchar(100)"
+    null = false
   }
-
+  column "type" {
+    type = "varchar(50)"
+    null = false
+  }
+  column "quantity" {
+    type = "int"
+    null = false
+  }
+  column "status" {
+    type = "varchar(50)"
+    null = false
+  }
+  column "notes" {
+    type = "text"
+  }
   primary_key {
-    columns = [column.id]
+    columns = ["equipment_id"]
   }
-
-  comment = "Jobs run history table"
 }

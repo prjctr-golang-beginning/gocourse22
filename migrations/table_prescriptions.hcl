@@ -1,81 +1,35 @@
-table "scan_result" {
-  schema = schema.public
-  column "id" {
-    type    = uuid
-    default = sql("gen_random_uuid()")
+table "prescriptions" {
+  schema = "public"
+  column "prescription_id" {
+    type = "int"
+    null = false
+    attrs = [auto_increment()]
   }
-
-  column "job_id" {
-    type = uuid
+  column "visit_id" {
+    type = "int"
     null = false
   }
-
-  column "check_id" {
-    type = uuid
+  column "medicine_name" {
+    type = "varchar(100)"
     null = false
   }
-
-  column "scan_start_time" {
-    type = timestamp
-    null = false
+  column "dose" {
+    type = "varchar(50)"
   }
-
-  column "scan_end_time" {
-    type = timestamp
-    null = false
+  column "frequency" {
+    type = "varchar(50)"
   }
-
-  column "status" {
-    type = varchar(255)
-    null = false
+  column "duration" {
+    type = "varchar(50)"
   }
-
-  column "has_errors" {
-    type = boolean
-    null = false
-    default = false
+  column "notes" {
+    type = "text"
   }
-
-  column "has_warnings" {
-    type = boolean
-    null = false
-    default = false
-  }
-
-  column "has_failures" {
-    type = boolean
-    null = false
-    default = false
-  }
-
-  column "message" {
-    type = text
-    null = true
-  }
-
-  column "created_at" {
-    type = timestamp
-    null = false
-    default = sql("now()")
-  }
-
   primary_key {
-    columns = [column.id]
+    columns = ["prescription_id"]
   }
-
-  foreign_key "job_id" {
-    columns     = [column.job_id]
-    ref_columns = [table.jobs.column.id]
-    on_update   = NO_ACTION
-    on_delete   = CASCADE
+  foreign_key "fk_visit_prescription" {
+    columns     = ["visit_id"]
+    ref_columns = ["visits.visit_id"]
   }
-
-  foreign_key "check_id" {
-    columns     = [column.check_id]
-    ref_columns = [table.business_rule_check.column.id]
-    on_update   = NO_ACTION
-    on_delete   = CASCADE
-  }
-
-  comment = "Scan raw result table"
 }

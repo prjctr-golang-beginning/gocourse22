@@ -1,85 +1,31 @@
-table "business_rule" {
-  schema = schema.public
-  column "id" {
-    type    = uuid
-    default = sql("gen_random_uuid()")
-    null    = false
+table "doctors" {
+  schema = "public"
+  column "doctor_id" {
+    type = "int"
+    null = false
+    attrs = ["auto_increment"]
   }
-
-  column "validation_suite_id" {
-    type = uuid
+  column "first_name" {
+    type = "varchar(50)"
     null = false
   }
-
-  column "name" {
-    type = varchar(255)
+  column "last_name" {
+    type = "varchar(50)"
     null = false
   }
-
-  column "description" {
-    type = varchar(512)
-    null = true
-  }
-
-  column "launch_schedule" {
-    type = varchar(64)
-    null = true
-  }
-
-  column "launch_status" {
-    type    = enum.launch_status
-    null    = false
-    default = "standby"
-  }
-
-  column "datasource_id" {
-    type = uuid
+  column "specialization" {
+    type = "varchar(100)"
     null = false
   }
-
-  column "status" {
-    type    = enum.status
-    null    = false
-    default = "disabled"
-  }
-
-  column "created_by" {
-    type = varchar(26)
+  column "email" {
+    type = "varchar(100)"
     null = false
+    attrs = ["unique"]
   }
-
-  column "created_at" {
-    type = timestamp
-    null = false
+  column "phone" {
+    type = "varchar(20)"
   }
-
-  column "updated_at" {
-    type = timestamp
-    null = true
-  }
-
-  column "category" {
-    type = enum.rule_category
-    null = true
-  }
-
   primary_key {
-    columns = [column.id]
+    columns = ["doctor_id"]
   }
-
-  foreign_key "validation_suite_id" {
-    columns     = [column.validation_suite_id]
-    ref_columns = [table.validation_suite.column.id]
-    on_update   = NO_ACTION
-    on_delete   = CASCADE
-  }
-
-  foreign_key "datasource_id" {
-    columns     = [column.datasource_id]
-    ref_columns = [table.datasource.column.id]
-    on_update   = NO_ACTION
-    on_delete   = NO_ACTION
-  }
-
-  comment = "Business rule table"
 }

@@ -1,71 +1,35 @@
-table "business_rule_check" {
-  schema = schema.public
-  column "id" {
-    type    = uuid
-    default = sql("gen_random_uuid()")
-    null    = false
+table "medical_histories" {
+  schema = "public"
+  column "history_id" {
+    type = "int"
+    null = false
+    attrs = [auto_increment()]
   }
-
-  column "business_rule_id" {
-    type = uuid
+  column "patient_id" {
+    type = "int"
     null = false
   }
-
-  column "name" {
-    type = varchar(255)
+  column "disease" {
+    type = "varchar(100)"
     null = false
   }
-
-  column "description" {
-    type = varchar(512)
-    null = true
+  column "treatment" {
+    type = "text"
   }
-
-  column "type" {
-    type = enum.check_type
-    null = false
+  column "start_date" {
+    type = "date"
   }
-
-  column "type_config" {
-    type = json
-    null = false
+  column "end_date" {
+    type = "date"
   }
-
-  column "last_run_date" {
-    type = timestamp
-    null = true
+  column "notes" {
+    type = "text"
   }
-
-  column "last_run_result" {
-    type = enum.check_result
-    null = true
-  }
-
-  column "created_by" {
-    type = varchar(26)
-    null = false
-  }
-
-  column "created_at" {
-    type = timestamp
-    null = false
-  }
-
-  column "updated_at" {
-    type = timestamp
-    null = true
-  }
-
   primary_key {
-    columns = [column.id]
+    columns = ["history_id"]
   }
-
-  foreign_key "business_rule_id" {
-    columns     = [column.business_rule_id]
-    ref_columns = [table.business_rule.column.id]
-    on_update   = NO_ACTION
-    on_delete   = CASCADE
+  foreign_key "fk_patient_history" {
+    columns     = ["patient_id"]
+    ref_columns = ["patients.patient_id"]
   }
-
-  comment = "Business rule check table"
 }
