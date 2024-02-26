@@ -1,35 +1,34 @@
 table "medical_histories" {
-  schema = "public"
+  schema = schema.public
   column "history_id" {
-    type = "int"
+    type = serial
     null = false
-    attrs = [auto_increment()]
   }
   column "patient_id" {
-    type = "int"
+    type = int
     null = false
   }
   column "disease" {
-    type = "varchar(100)"
+    type = varchar(100)
     null = false
   }
   column "treatment" {
-    type = "text"
+    type = text
   }
   column "start_date" {
-    type = "date"
+    type = date
   }
   column "end_date" {
-    type = "date"
+    type = date
   }
   column "notes" {
-    type = "text"
+    type = text
   }
   primary_key {
-    columns = ["history_id"]
+    columns = [column.history_id]
   }
   foreign_key "fk_patient_history" {
-    columns     = ["patient_id"]
-    ref_columns = ["patients.patient_id"]
+    columns     = [column.patient_id]
+    ref_columns = [table.patients.column.patient_id]
   }
 }

@@ -5,7 +5,7 @@ import (
 	"github.com/samber/do"
 	"github.com/urfave/cli/v2"
 	"gocourse22/cmd/flag"
-	http2 "gocourse22/internal/domains/clinic/http"
+	http2 "gocourse22/internal/domains/clinic"
 	appHttp "gocourse22/internal/interface/http"
 	common "gocourse22/providers"
 	"log"

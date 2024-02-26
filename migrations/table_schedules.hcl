@@ -1,34 +1,33 @@
 table "schedules" {
-  schema = "public"
+  schema = schema.public
   column "schedule_id" {
-    type = "int"
+    type = serial
     null = false
-    attrs = [auto_increment()]
   }
   column "doctor_id" {
-    type = "int"
+    type = int
     null = false
   }
   column "work_day" {
-    type = "date"
+    type = date
     null = false
   }
   column "start_time" {
-    type = "time"
+    type = time
     null = false
   }
   column "end_time" {
-    type = "time"
+    type = time
     null = false
   }
   column "notes" {
-    type = "text"
+    type = text
   }
   primary_key {
-    columns = ["schedule_id"]
+    columns = [column.schedule_id]
   }
   foreign_key "fk_doctor_schedule" {
-    columns     = ["doctor_id"]
-    ref_columns = ["doctors.doctor_id"]
+    columns     = [column.doctor_id]
+    ref_columns = [table.doctors.column.doctor_id]
   }
 }

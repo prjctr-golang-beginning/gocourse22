@@ -1,4 +1,4 @@
-package http
+package clinic
 
 import (
 	"github.com/gin-gonic/gin"
@@ -42,8 +42,19 @@ func (h *ClinicHandler) RegisterRoutes(g *gin.Engine) {
 			group.GET("/:clinic_id/config",
 				h.config,
 			)
+
+			group.GET("/visits/",
+				h.groupVisits,
+			)
 		}
 	}
+}
+
+func (h *ClinicHandler) groupVisits(c *gin.Context) {
+	s := &Service{}
+	res := s.GroupPatientsVisits()
+
+	http.NewResponse(c, res)
 }
 
 func (h *ClinicHandler) viewAll(c *gin.Context) {

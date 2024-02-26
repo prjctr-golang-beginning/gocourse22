@@ -1,40 +1,39 @@
 table "visits" {
-  schema = "public"
+  schema = schema.public
   column "visit_id" {
-    type = "int"
+    type = serial
     null = false
-    attrs = [auto_increment()]
   }
   column "patient_id" {
-    type = "int"
+    type = int
     null = false
   }
   column "doctor_id" {
-    type = "int"
+    type = int
     null = false
   }
   column "visit_date" {
-    type = "timestamp with time zone"
+    type = timestamp
     null = false
   }
   column "reason" {
-    type = "text"
+    type = text
   }
   column "diagnosis" {
-    type = "text"
+    type = text
   }
   column "notes" {
-    type = "text"
+    type = text
   }
   primary_key {
-    columns = ["visit_id"]
+    columns = [column.visit_id]
   }
   foreign_key "fk_patient" {
-    columns     = ["patient_id"]
-    ref_columns = ["patients.patient_id"]
+    columns     = [column.patient_id]
+    ref_columns = [table.patients.column.patient_id]
   }
   foreign_key "fk_doctor" {
-    columns     = ["doctor_id"]
-    ref_columns = ["doctors.doctor_id"]
+    columns     = [column.doctor_id]
+    ref_columns = [table.doctors.column.doctor_id]
   }
 }

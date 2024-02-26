@@ -72,7 +72,7 @@ func MigrateApply() *cli.Command {
 			}
 
 			res, resErr := client.SchemaApply(c.Context, &applyParams)
-			if err != nil {
+			if resErr != nil {
 				log.Fatalf("Failed to apply schema due to error: %v", resErr)
 				return resErr
 			}

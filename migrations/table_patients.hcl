@@ -1,36 +1,35 @@
 table "patients" {
-  schema = "public"
+  schema = schema.public
   column "patient_id" {
-    type = "int"
+    type = serial
     null = false
-    attrs = [auto_increment()]
   }
   column "first_name" {
-    type = "varchar(50)"
+    type = varchar(50)
     null = false
   }
   column "last_name" {
-    type = "varchar(50)"
+    type = varchar(50)
     null = false
   }
   column "date_of_birth" {
-    type = "date"
+    type = date
     null = false
   }
   column "gender" {
-    type = "char(1)"
+    type = char(1)
     null = false
   }
   column "email" {
-    type = "varchar(100)"
+    type = varchar(100)
   }
   column "phone" {
-    type = "varchar(20)"
+    type = varchar(20)
   }
   column "address" {
-    type = "text"
+    type = text
   }
   primary_key {
-    columns = ["patient_id"]
+    columns = [column.patient_id]
   }
 }

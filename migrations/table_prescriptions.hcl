@@ -1,35 +1,34 @@
 table "prescriptions" {
-  schema = "public"
+  schema = schema.public
   column "prescription_id" {
-    type = "int"
+    type = serial
     null = false
-    attrs = [auto_increment()]
   }
   column "visit_id" {
-    type = "int"
+    type = int
     null = false
   }
   column "medicine_name" {
-    type = "varchar(100)"
+    type = varchar(100)
     null = false
   }
   column "dose" {
-    type = "varchar(50)"
+    type = varchar(50)
   }
   column "frequency" {
-    type = "varchar(50)"
+    type = varchar(50)
   }
   column "duration" {
-    type = "varchar(50)"
+    type = varchar(50)
   }
   column "notes" {
-    type = "text"
+    type = text
   }
   primary_key {
-    columns = ["prescription_id"]
+    columns = [column.prescription_id]
   }
   foreign_key "fk_visit_prescription" {
-    columns     = ["visit_id"]
-    ref_columns = ["visits.visit_id"]
+    columns     = [column.visit_id]
+    ref_columns = [table.visits.column.visit_id]
   }
 }
