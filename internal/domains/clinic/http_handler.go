@@ -1,17 +1,21 @@
 package clinic
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/samber/do"
 	"gocourse22/internal/interface/http"
 	httpInt "net/http"
 )
 
-func NewClinicHandler(_ *do.Injector) (*ClinicHandler, error) {
-	return &ClinicHandler{}, nil
+func NewClinicHandler(inj *do.Injector) (*ClinicHandler, error) {
+	return &ClinicHandler{
+		s: do.MustInvoke[*Service](inj),
+	}, nil
 }
 
 type ClinicHandler struct {
+	s *Service
 }
 
 func (h *ClinicHandler) RegisterRoutes(g *gin.Engine) {
@@ -51,8 +55,7 @@ func (h *ClinicHandler) RegisterRoutes(g *gin.Engine) {
 }
 
 func (h *ClinicHandler) groupVisits(c *gin.Context) {
-	s := &Service{}
-	res := s.GroupPatientsVisits()
+	res := h.s.GroupPatientsVisits()
 
 	http.NewResponse(c, res)
 }
@@ -82,9 +85,13 @@ func (h *ClinicHandler) edit(c *gin.Context) {
 }
 
 func (h *ClinicHandler) delete(c *gin.Context) {
-	// do delete
+	if err := h.s.DeleteClinic(); err != nil {
+		fmt.Println(err)
+		c.Status(httpInt.StatusNoContent)
+		return
+	}
 
-	c.Status(httpInt.StatusNoContent)
+	c.Status(httpInt.StatusOK)
 }
 
 func (h *ClinicHandler) config(c *gin.Context) {

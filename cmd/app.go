@@ -5,14 +5,16 @@ import (
 	"github.com/samber/do"
 	"github.com/urfave/cli/v2"
 	"gocourse22/cmd/flag"
-	http2 "gocourse22/internal/domains/clinic"
+	"gocourse22/internal/domains/clinic"
 	appHttp "gocourse22/internal/interface/http"
-	common "gocourse22/providers"
+	common "gocourse22/internal/providers"
+	"gocourse22/pkg/extend"
 	"log"
 	"net/http"
 	"os/signal"
 	"sync"
 	"syscall"
+	"time"
 )
 
 // Run define the run command
@@ -40,6 +42,8 @@ func Run() *cli.Command {
 			ctx, cancelFunc := signal.NotifyContext(c.Context, syscall.SIGTERM, syscall.SIGINT, syscall.SIGKILL)
 			defer cancelFunc()
 
+			ctx = extend.NewDelayedCancelContext(ctx, 5*time.Second)
+
 			// inject the signal notify context
 			do.ProvideValue(injector, ctx)
 
@@ -48,8 +52,8 @@ func Run() *cli.Command {
 			do.OverrideValue(injector, c)
 
 			common.ProvideConnection(injector)
-
-			do.Provide(injector, http2.NewClinicHandler)
+			do.Provide(injector, clinic.ProvideService)
+			do.Provide(injector, clinic.NewClinicHandler)
 
 			waitForTheEnd := &sync.WaitGroup{}
 
@@ -60,7 +64,7 @@ func Run() *cli.Command {
 
 				router := appHttp.NewRouter()
 				router.RegisterApplicationRoutes(
-					do.MustInvoke[*http2.ClinicHandler](injector),
+					do.MustInvoke[*clinic.ClinicHandler](injector),
 				)
 
 				httpServer := appHttp.NewServer(injector, router)

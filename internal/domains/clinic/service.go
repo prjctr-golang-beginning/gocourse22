@@ -1,11 +1,20 @@
 package clinic
 
 import (
+	"github.com/samber/do"
+	"gocourse22/pkg/extend"
 	"sync"
 )
 
 const visits int = 110
 const weeks int = 3
+
+func ProvideService(_ *do.Injector) (*Service, error) {
+	return NewService(), nil
+}
+func NewService() *Service {
+	return &Service{}
+}
 
 type Service struct {
 }
@@ -27,6 +36,10 @@ func (s *Service) GroupPatientsVisits() []GroupedVisits {
 	}
 
 	return res
+}
+
+func (s *Service) DeleteClinic() error {
+	return extend.NewFormattedError(1, `Clinic deletion is impossible`, nil)
 }
 
 func muxStrategy(workers int, visitsResult map[int]int) {

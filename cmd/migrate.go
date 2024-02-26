@@ -6,7 +6,7 @@ import (
 	"github.com/samber/do"
 	"github.com/urfave/cli/v2"
 	"gocourse22/cmd/flag"
-	common "gocourse22/providers"
+	common "gocourse22/internal/providers"
 	"log"
 	"os"
 )
