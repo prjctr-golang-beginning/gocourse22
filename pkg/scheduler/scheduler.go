@@ -60,6 +60,8 @@ func (r *Scheduler) Manage(ctx context.Context, tasks ...Task) error {
 
 	s.StartAsync()
 
+	<-ctx.Done()
+
 	r._scheduler = s
 
 	return nil

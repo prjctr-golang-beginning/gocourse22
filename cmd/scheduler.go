@@ -71,7 +71,6 @@ func Worker() *cli.Command {
 					}
 				}
 				log.Println("Scheduler has been stopped")
-
 			}()
 
 			stopWg.Wait()
