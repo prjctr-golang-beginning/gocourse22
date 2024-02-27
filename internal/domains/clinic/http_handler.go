@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/samber/do"
 	"gocourse22/internal/interface/http"
+	"log"
 	httpInt "net/http"
 )
 
@@ -61,9 +62,14 @@ func (h *ClinicHandler) groupVisits(c *gin.Context) {
 }
 
 func (h *ClinicHandler) viewAll(c *gin.Context) {
-	// do view all
+	res, err := h.s.GetAll(c.Request.Context())
+	if err != nil {
+		log.Println(err)
+		c.Status(httpInt.StatusNoContent)
+		return
+	}
 
-	http.NewResponse(c, []byte{})
+	http.NewResponse(c, res)
 }
 
 func (h *ClinicHandler) view(c *gin.Context) {

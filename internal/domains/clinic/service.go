@@ -1,6 +1,10 @@
 package clinic
 
 import (
+	"context"
+	"fmt"
+	"github.com/georgysavva/scany/pgxscan"
+	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/samber/do"
 	"gocourse22/pkg/extend"
 	"sync"
@@ -9,14 +13,17 @@ import (
 const visits int = 110
 const weeks int = 3
 
-func ProvideService(_ *do.Injector) (*Service, error) {
-	return NewService(), nil
+func ProvideService(inj *do.Injector) (*Service, error) {
+	return NewService(
+		do.MustInvokeNamed[*pgxpool.Pool](inj, `postgres`),
+	), nil
 }
-func NewService() *Service {
-	return &Service{}
+func NewService(conn *pgxpool.Pool) *Service {
+	return &Service{conn}
 }
 
 type Service struct {
+	conn *pgxpool.Pool
 }
 
 type GroupedVisits struct {
@@ -36,6 +43,15 @@ func (s *Service) GroupPatientsVisits() []GroupedVisits {
 	}
 
 	return res
+}
+
+func (s *Service) GetAll(ctx context.Context) ([]Clinic, error) {
+	var res []Clinic
+	if err := pgxscan.Select(ctx, s.conn, &res, fmt.Sprintf(`SELECT * FROM %s`, tableName)); err != nil {
+		return nil, err
+	}
+
+	return res, nil
 }
 
 func (s *Service) DeleteClinic() error {
